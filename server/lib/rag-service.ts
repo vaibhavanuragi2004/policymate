@@ -48,7 +48,7 @@ export class RAGService {
       const response = await this.openRouterClient.generateCompletion([
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
-      ]);
+      ], "qwen/qwen-2.5-72b-instruct");
 
       let content = response.choices[0]?.message?.content || "I apologize, but I couldn't generate a response.";
 
@@ -139,8 +139,8 @@ Please provide a comprehensive answer based on the policy information above. If 
       if (response && response.choices && response.choices.length > 0) {
         return {
           success: true,
-          model: "Cerebras Llama 3.1 70B",
-          provider: "Cerebras via OpenRouter"
+          model: "Qwen 2.5 72B Instruct",
+          provider: "Qwen via OpenRouter"
         };
       } else {
         throw new Error("Invalid response from API");
