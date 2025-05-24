@@ -127,4 +127,26 @@ Please provide a comprehensive answer based on the policy information above. If 
     
     return response;
   }
+
+  async testConnection(): Promise<{ success: boolean; model: string; provider: string }> {
+    try {
+      const testMessages = [
+        { role: "user", content: "Hello, test connection" }
+      ];
+      
+      const response = await this.openRouterClient.generateCompletion(testMessages, "cerebras/llama3.1-70b");
+      
+      if (response && response.choices && response.choices.length > 0) {
+        return {
+          success: true,
+          model: "Cerebras Llama 3.1 70B",
+          provider: "Cerebras via OpenRouter"
+        };
+      } else {
+        throw new Error("Invalid response from API");
+      }
+    } catch (error) {
+      throw new Error(`Connection test failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
 }

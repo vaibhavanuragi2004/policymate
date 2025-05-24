@@ -4,6 +4,7 @@ import LanguageSelector from "@/components/language-selector";
 import DocumentUpload from "@/components/document-upload";
 import ChatInterface from "@/components/chat-interface";
 import VectorDatabaseStatus from "@/components/vector-database-status";
+import ApiKeySettings from "@/components/api-key-settings";
 
 export default function PolicyAdvisor() {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
@@ -54,6 +55,7 @@ export default function PolicyAdvisor() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
+            <ApiKeySettings />
             <DocumentUpload />
             <VectorDatabaseStatus />
           </div>
