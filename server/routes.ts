@@ -37,35 +37,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/documents/upload", upload.single("document"), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
+  app.post("/api/documents/upload", (req, res) => {
+    console.log("Upload endpoint hit");
+    
+    upload.single("document")(req, res, async (err) => {
+      if (err) {
+        console.error("Multer error:", err);
+        if (err instanceof multer.MulterError) {
+          if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ message: "File too large. Maximum size is 10MB." });
+          }
+        }
+        return res.status(400).json({ message: err.message });
       }
 
-      const documentData = {
-        filename: req.file.filename || `${Date.now()}-${req.file.originalname}`,
-        originalName: req.file.originalname,
-        mimeType: req.file.mimetype,
-        size: req.file.size,
-        status: "processing",
-      };
+      try {
+        console.log("Request file:", req.file ? "File received" : "No file");
+        console.log("Request body:", req.body);
+        
+        if (!req.file) {
+          return res.status(400).json({ message: "No file uploaded" });
+        }
 
-      const validatedData = insertDocumentSchema.parse(documentData);
-      const document = await storage.createDocument(validatedData);
-
-      // Process document asynchronously
-      documentProcessor.processDocument(document.id, req.file.buffer)
-        .catch(error => {
-          console.error(`Error processing document ${document.id}:`, error);
-          storage.updateDocumentStatus(document.id, "error", undefined, error.message);
+        console.log("File details:", {
+          originalName: req.file.originalname,
+          mimeType: req.file.mimetype,
+          size: req.file.size
         });
 
-      res.json(document);
-    } catch (error) {
-      console.error("Error uploading document:", error);
-      res.status(500).json({ message: "Failed to upload document" });
-    }
+        const documentData = {
+          filename: req.file.filename || `${Date.now()}-${req.file.originalname}`,
+          originalName: req.file.originalname,
+          mimeType: req.file.mimetype,
+          size: req.file.size,
+          status: "processing",
+        };
+
+        const validatedData = insertDocumentSchema.parse(documentData);
+        const document = await storage.createDocument(validatedData);
+
+        console.log("Document created:", document.id);
+
+        // Process document asynchronously
+        documentProcessor.processDocument(document.id, req.file.buffer)
+          .catch(error => {
+            console.error(`Error processing document ${document.id}:`, error);
+            storage.updateDocumentStatus(document.id, "error", undefined, error.message);
+          });
+
+        res.json(document);
+      } catch (error) {
+        console.error("Error uploading document:", error);
+        res.status(500).json({ message: "Failed to upload document" });
+      }
+    });
   });
 
   app.delete("/api/documents/:id", async (req, res) => {
