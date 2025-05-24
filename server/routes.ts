@@ -193,19 +193,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API Key Settings routes
   app.post("/api/settings/api-key", async (req, res) => {
     try {
+      console.log("Received API key request:", req.body);
+      
       const apiKeySchema = z.object({
         apiKey: z.string().min(1),
       });
 
       const { apiKey } = apiKeySchema.parse(req.body);
 
+      // Validate API key format (OpenRouter keys start with sk-or-v1-)
+      if (!apiKey.startsWith('sk-or-v1-')) {
+        return res.status(400).json({ 
+          message: "Invalid API key format. OpenRouter keys should start with 'sk-or-v1-'" 
+        });
+      }
+
       // Store API key in environment (in production, this should be more secure)
       process.env.OPENROUTER_API_KEY = apiKey;
 
+      console.log("API key set successfully");
       res.json({ success: true, message: "API key set successfully" });
     } catch (error) {
       console.error("Error setting API key:", error);
-      res.status(500).json({ message: "Failed to set API key" });
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid request format" });
+      } else {
+        res.status(500).json({ message: "Failed to set API key" });
+      }
     }
   });
 
