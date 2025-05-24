@@ -22,7 +22,13 @@ export class OpenRouterClient {
     messages: Array<{ role: string; content: string }>,
     model = "cerebras/llama3.1-70b"
   ): Promise<OpenRouterResponse> {
+    if (!this.apiKey) {
+      throw new Error("OpenRouter API key not configured. Please set your API key in the settings panel.");
+    }
+
     try {
+      console.log(`Making request to OpenRouter with model: ${model}`);
+      
       const response = await fetch(`${this.baseUrl}/chat/completions`, {
         method: "POST",
         headers: {
@@ -40,14 +46,33 @@ export class OpenRouterClient {
         }),
       });
 
+      console.log(`OpenRouter response status: ${response.status}`);
+
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`OpenRouter API error: ${response.status} - ${errorText}`);
+        console.error(`OpenRouter API error response: ${errorText}`);
+        
+        if (response.status === 401) {
+          throw new Error("Invalid API key. Please check your OpenRouter API key and try again.");
+        } else if (response.status === 402) {
+          throw new Error("Insufficient credits in your OpenRouter account. Please add credits and try again.");
+        } else if (response.status === 429) {
+          throw new Error("Rate limit exceeded. Please wait a moment and try again.");
+        } else {
+          throw new Error(`OpenRouter API error (${response.status}): ${errorText}`);
+        }
       }
 
-      return await response.json();
+      const jsonResponse = await response.json();
+      console.log("OpenRouter response received successfully");
+      return jsonResponse;
     } catch (error) {
       console.error("OpenRouter API error:", error);
+      
+      if (error instanceof Error && error.message.includes("Unexpected token")) {
+        throw new Error("Received invalid response from OpenRouter API. This usually indicates an authentication issue. Please verify your API key.");
+      }
+      
       throw new Error(`Failed to generate completion: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
