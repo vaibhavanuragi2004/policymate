@@ -37,7 +37,7 @@ export default function ChatInterface({ sessionId, language }: ChatInterfaceProp
 
   // Fetch messages
   const { data: messages = [], isLoading: messagesLoading } = useQuery<Message[]>({
-    queryKey: ["/api/conversations", sessionId, "messages"],
+    queryKey: [`/api/conversations/${sessionId}/messages`],
     enabled: !!conversationId,
   });
 
@@ -52,7 +52,7 @@ export default function ChatInterface({ sessionId, language }: ChatInterfaceProp
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ 
-        queryKey: ["/api/conversations", sessionId, "messages"] 
+        queryKey: [`/api/conversations/${sessionId}/messages`] 
       });
       setMessage("");
     },
