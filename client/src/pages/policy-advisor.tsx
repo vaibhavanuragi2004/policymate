@@ -39,17 +39,14 @@ export default function PolicyAdvisor() {
               
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-accent-blue rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">JD</span>
+                  <span className="text-white text-sm font-medium">VA</span>
                 </div>
-                <span className="text-sm text-slate-gray hidden sm:inline">
-                  John Doe
-                </span>
+                <span className="text-sm text-slate-gray hidden sm:inline">vaibhav</span>
               </div>
             </div>
           </div>
         </div>
       </header>
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
