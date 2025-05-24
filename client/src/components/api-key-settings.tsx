@@ -155,11 +155,11 @@ export default function ApiKeySettings() {
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="space-y-1">
                   <span className="text-slate-gray">Primary Model:</span>
-                  <div className="font-mono text-foreground">cerebras/llama3.1-8b</div>
+                  <div className="font-mono text-foreground">qwen/qwen-2.5-72b-instruct</div>
                 </div>
                 <div className="space-y-1">
                   <span className="text-slate-gray">Translation:</span>
-                  <div className="font-mono text-foreground">Qwen3 via OpenRouter</div>
+                  <div className="font-mono text-foreground">Qwen 2.5 via OpenRouter</div>
                 </div>
                 <div className="space-y-1">
                   <span className="text-slate-gray">Inference Speed:</span>
