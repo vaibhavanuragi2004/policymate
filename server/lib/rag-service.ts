@@ -134,7 +134,7 @@ Please provide a comprehensive answer based on the policy information above. If 
         { role: "user", content: "Hello, test connection" }
       ];
       
-      const response = await this.openRouterClient.generateCompletion(testMessages, "cerebras/llama3.1-70b");
+      const response = await this.openRouterClient.generateCompletion(testMessages, "cerebras/llama3.1-8b");
       
       if (response && response.choices && response.choices.length > 0) {
         return {

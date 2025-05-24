@@ -20,7 +20,7 @@ export class OpenRouterClient {
 
   async generateCompletion(
     messages: Array<{ role: string; content: string }>,
-    model = "cerebras/llama3.1-70b"
+    model = "cerebras/llama3.1-8b"
   ): Promise<OpenRouterResponse> {
     if (!this.apiKey) {
       throw new Error("OpenRouter API key not configured. Please set your API key in the settings panel.");
